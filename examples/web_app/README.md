@@ -1,6 +1,6 @@
 # Example: Web (FastAPI) App setup
 
-This example shows how to create roles for a FastAPI web application with thoughtful permission boundries intended for a production setup.
+This example shows how to create roles for a FastAPI web application with thoughtful permission boundaries intended for a production setup.
 
 ## Prerequisites
 
