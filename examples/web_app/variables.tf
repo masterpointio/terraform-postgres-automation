@@ -13,6 +13,7 @@ variable "db_username" {
 variable "db_password" {
   type        = string
   description = "The password of the database instance."
+  sensitive   = true
 }
 
 variable "db_port" {

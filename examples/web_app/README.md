@@ -38,9 +38,9 @@ There are 3 roles in this example,
   - This role has full Create, Read, Update, Delete abilities
 
 - **fastapi_app_reader**: reader role for the `web_app` database.
-  - This DB role is a seecondary role for the FasAPI application
-  - This role can can only Read from the DB. For example, we'd use this role for `GET` http endpoints.
-  - For production setups, we'd have this role connect to a Postgres Read-Replica Server to minimize the amount of DB traffic on Postgres Write-DB instnace.
+  - This DB role is a secondary role for the FastAPI application
+  - This role can only Read from the DB. For example, we'd use this role for `GET` http endpoints.
+  - For production setups, we'd have this role connect to a Postgres Read-Replica Server to minimize the amount of DB traffic on Postgres Write-DB instance.
 
 ## NOTE about authentication on Mac with default settings
 
