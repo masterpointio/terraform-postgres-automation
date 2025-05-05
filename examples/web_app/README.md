@@ -30,7 +30,7 @@ There are 3 roles in this example,
 - **fastapi_app_owner**: owner of the `web_app` database.
 
   - This DB role is only used and accessed in the CI/CD
-  - This role applies migrations (makes changes to the DB structure) prior to the applicaiton booting up
+  - This role applies migrations (makes changes to the DB structure) prior to the application booting up
 
 - **fastapi_app_writer**: writer role for the `web_app` database
 
