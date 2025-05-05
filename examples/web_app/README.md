@@ -34,7 +34,7 @@ There are 3 roles in this example,
 
 - **fastapi_app_writer**: writer role for the `web_app` database
 
-  - This DB role is the priamry role for the FasAPI application
+  - This DB role is the primary role for the FastAPI application
   - This role can has full Create, Read, Updated, Delete abilities
 
 - **fastapi_app_reader**: reader role for the `web_app` database.
