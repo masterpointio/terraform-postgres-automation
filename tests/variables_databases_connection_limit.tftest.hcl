@@ -53,3 +53,35 @@ run "valid_connection_limit_not_provided" {
   }
 }
 
+# Invalid case: connection_limit = 0
+run "invalid_connection_limit_zero" {
+  command = plan
+
+  variables {
+    databases = [{
+      name             = "db_zero"
+      connection_limit = 0
+    }]
+  }
+
+  expect_failures = [
+    var.databases
+  ]
+}
+
+# Invalid case: connection_limit = -2
+run "invalid_connection_limit_negative_two" {
+  command = plan
+
+  variables {
+    databases = [{
+      name             = "db_neg_two"
+      connection_limit = -2
+    }]
+  }
+
+  expect_failures = [
+    var.databases
+  ]
+}
+
