@@ -1,0 +1,112 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Testing Terraform Variable Inputs
+
+This rule outlines best practices for testing Terraform variable inputs. Proper validation of input variables is crucial for maintaining robust and error-free infrastructure configurations.
+
+## Importance of Variable Testing
+
+- **Prevent Errors**: Catch invalid inputs early before they cause deployment failures or misconfigurations.
+- **Improve Reusability**: Well-validated modules are easier and safer for others to use.
+- **Enhance Security**: Ensure that inputs conform to security policies (e.g., naming conventions, allowed values).
+- **Maintain Consistency**: Enforce standards for variable definitions across your Terraform configurations.
+
+## How to Test Variables
+
+Terraform provides a `validation` block within variable declarations to define custom validation rules.
+
+### Key Principles for Variable Validation:
+
+1.  **Be Specific**: Validation rules should be as specific as possible to the expected input.
+2.  **Clear Error Messages**: Provide informative error messages that guide the user on how to correct the input.
+3.  **Use Regex for Patterns**: For string inputs that must follow a specific format (e.g., naming conventions), use regular expressions.
+4.  **Check Lengths**: For strings and lists, validate minimum and maximum lengths if applicable.
+5.  **Validate Types**: Although Terraform checks types, custom validation can add more nuanced checks (e.g., ensuring a number is within a specific range).
+6.  **Test Edge Cases**: Consider how your validation rules handle empty inputs, nulls (if allowed), and extreme values.
+
+### Examples
+
+#### Example 1: Simple String Length and Pattern Validation
+
+```hcl
+variable "environment_name" {
+  type        = string
+  description = "The name of the environment (e.g., dev, staging, prod)."
+
+  validation {
+    condition     = length(var.environment_name) > 2 && length(var.environment_name) < 10
+    error_message = "The environment_name must be between 3 and 9 characters."
+  }
+
+  validation {
+    condition     = can(regex("^[a-z0-9]+$", var.environment_name))
+    error_message = "The environment_name must only contain lowercase alphanumeric characters."
+  }
+}
+```
+
+#### Example 2: List Contains Specific Values
+
+```hcl
+variable "instance_type" {
+  type        = string
+  description = "The EC2 instance type."
+
+  validation {
+    condition     = contains(["t3.micro", "t3.small", "m5.large"], var.instance_type)
+    error_message = "Allowed instance types are t3.micro, t3.small, or m5.large."
+  }
+}
+```
+
+#### Example 3: Number Range
+
+```hcl
+variable "port_number" {
+  type        = number
+  description = "The port number for the service."
+
+  validation {
+    condition     = var.port_number >= 1024 && var.port_number <= 65535
+    error_message = "The port_number must be between 1024 and 65535."
+  }
+}
+```
+
+#### Example 4: Complex Object Validation (using `alltrue` and `one` for more complex scenarios)
+Consider a variable for defining multiple subnets, each with a CIDR block and a name.
+
+```hcl
+variable "subnets" {
+  type = list(object({
+    name       = string
+    cidr_block = string
+  }))
+  description = "A list of subnets to create."
+
+  validation {
+    condition = alltrue([
+      for subnet in var.subnets : can(regex("^10\.(\d{1,3})\.(\d{1,3})\.0/24$", subnet.cidr_block))
+    ])
+    error_message = "All subnet CIDR blocks must be valid /24 private IP ranges (e.g., 10.x.x.0/24)."
+  }
+
+  validation {
+    condition = alltrue([
+      for subnet in var.subnets : length(subnet.name) > 0
+    ])
+    error_message = "All subnets must have a name."
+  }
+}
+```
+
+## Common Pitfalls
+
+-   **Overly Complex Regex**: Keep regular expressions readable and maintainable.
+-   **Vague Error Messages**: Ensure error messages clearly state what's wrong and how to fix it.
+-   **Not Testing `null` or Empty Values**: If a variable is optional, ensure your validation logic correctly handles cases where it's not provided or is explicitly set to `null` (if its type and default allow). Terraform's `coalesce` or `try` functions can be helpful here, but be mindful of how they interact with validation conditions.
+
+By implementing thorough variable validation, you can significantly improve the reliability and maintainability of your Terraform code.

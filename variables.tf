@@ -5,6 +5,15 @@ variable "databases" {
   }))
   default     = []
   description = "The logical database to create and configure"
+
+  validation {
+    condition = alltrue([
+      for db in var.databases : (
+        (db.connection_limit == null ? true : (db.connection_limit == -1 || db.connection_limit >= 1))
+      )
+    ])
+    error_message = "Database connection_limit, if set, must be -1 (for unlimited connections) or an integer greater than or equal to 1."
+  }
 }
 
 variable "roles" {
